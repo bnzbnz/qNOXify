@@ -317,7 +317,7 @@ object qNOXifyFrm: TqNOXifyFrm
         Top = 0
         Width = 742
         Height = 283
-        ActivePage = TabSheet1
+        ActivePage = TabSheet2
         Align = alClient
         TabOrder = 0
         object TabSheet1: TTabSheet
@@ -342,17 +342,28 @@ object qNOXifyFrm: TqNOXifyFrm
           end
         end
         object TabSheet2: TTabSheet
-          Caption = 'TabSheet2'
+          Caption = 'Peers'
           ImageIndex = 1
+          object SLpeers: TStringGrid
+            Left = 0
+            Top = 0
+            Width = 734
+            Height = 255
+            Align = alClient
+            ColCount = 12
+            FixedCols = 0
+            RowCount = 20
+            TabOrder = 0
+          end
         end
       end
     end
   end
   object Warning: TMemo
-    Left = 64
-    Top = 120
+    Left = 74
+    Top = 5
     Width = 619
-    Height = 283
+    Height = 169
     Lines.Strings = (
       
         'WARNING... WARNING... WARNING... (this is said) : THIS A WORK IN' +

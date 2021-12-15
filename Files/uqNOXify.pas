@@ -107,6 +107,7 @@ type
     AddMagnet: TMenuItem;
     OpenTorrent: TFileOpenDialog;
     Warning: TMemo;
+    SLpeers: TStringGrid;
     procedure FormCreate(Sender: TObject);
     procedure SGDrawCell(Sender: TObject; ACol, ARow: Integer; Rect: TRect;
       State: TGridDrawState);
@@ -650,8 +651,10 @@ end;
 procedure TqNOXifyFrm.FormCreate(Sender: TObject);
 begin
   Warning.Visible := False;
+  PageControl1.ActivePageIndex := 0;
 
   SGDetails.Selection:= NoSelection;
+  SLPeers.Selection := NoSelection;
 
   PMHdrCol.TrackMenu := True;
   PMHdrCol.OnTrackMenuNotify := TrackMenuNotifyHandler;
@@ -763,8 +766,8 @@ begin
     GD.Selected :=  not GD.Selected;
     GetColData(0).LastRowSelected := ARow;
     GetColData(0).LastHashSelected := GetRowData(ARow).Hash;
-    qBTInfo.Free;
-    qBTInfo := qB.GetTorrentGenericProperties(GetColData(0).LastHashSelected);
+    //qBTInfo.Free;
+    //qBTInfo := qB.GetTorrentGenericProperties(GetColData(0).LastHashSelected);
   end else
   if GetKeyState(VK_SHIFT) < 0 then
   begin
@@ -775,8 +778,8 @@ begin
       GetRowData(i).Selected := False;
     GetColData(0).LastRowSelected := ARow;
     GetColData(0).LastHashSelected := GetRowData(ARow).Hash;
-    qBTInfo.Free;
-    qBTInfo := qB.GetTorrentGenericProperties(GetColData(0).LastHashSelected);
+    //qBTInfo.Free;
+    //qBTInfo := qB.GetTorrentGenericProperties(GetColData(0).LastHashSelected);
     GD.Selected := True;
   end;
   SG.Invalidate;
@@ -1178,6 +1181,49 @@ begin
     GetColData(0).LastHashSelected := GetRowData(1).Hash;
   end;
 
+  if (GetLastSelectedTorrent <> Nil) and (PageControl1.ActivePageIndex = 1) then
+  begin
+    for var i := 0 to SLPeers.ColCount -1 do
+      for var j := 0 to SLPeers.RowCount -1 do
+        SLPeers.Cells[i , j] := '';
+
+    var T := GetLastSelectedTorrent;
+    var qBTPeers := qB.GetTorrentPeersData(T.Fhash);
+    var Col := -1;
+    Inc(Col); SLPeers.Cells[Col, 0] := 'Region/Country'; SLPeers.ColWidths[Col] := 120;
+    Inc(Col); SLPeers.Cells[Col, 0] := 'IP'; SLPeers.ColWidths[Col] := 100;
+    Inc(Col); SLPeers.Cells[Col, 0] := 'Port'; SLPeers.ColWidths[Col] := 60;
+    Inc(Col); SLPeers.Cells[Col, 0] := 'Flags'; SLPeers.ColWidths[Col] := 80;
+    Inc(Col); SLPeers.Cells[Col, 0] := 'Client'; SLPeers.ColWidths[Col] := 100;
+    Inc(Col); SLPeers.Cells[Col, 0] := 'Progress'; SLPeers.ColWidths[Col] := 80;
+    Inc(Col); SLPeers.Cells[Col, 0] := 'Down Speed'; SLPeers.ColWidths[Col] := 80;
+    Inc(Col); SLPeers.Cells[Col, 0] := 'Up Speed'; SLPeers.ColWidths[Col] := 80;
+    Inc(Col); SLPeers.Cells[Col, 0] := 'Downloaded'; SLPeers.ColWidths[Col] := 80;
+    Inc(Col); SLPeers.Cells[Col, 0] := 'Uploaded'; SLPeers.ColWidths[Col] := 80;
+    Inc(Col); SLPeers.Cells[Col, 0] := 'Relevance'; SLPeers.ColWidths[Col] := 80;
+    Inc(Col); SLPeers.Cells[Col, 0] := 'Files'; SLPeers.ColWidths[Col] := 160;
+    SLPeers.RowCount := qBTPeers.Fpeers.Count + 1;
+    var Row := 1;
+    for var P in qBTPeers.Fpeers do
+    begin
+      Col := -1;
+      Inc(Col); SLPeers.Cells[Col, Row] := TqBitTorrentPeerDataType(P.Value).Fcountry;
+      Inc(Col); SLPeers.Cells[Col, Row] := TqBitTorrentPeerDataType(P.Value).Fip;
+      Inc(Col); SLPeers.Cells[Col, Row] := TqBitTorrentPeerDataType(P.Value).Fport;
+      Inc(Col); SLPeers.Cells[Col, Row] := TqBitTorrentPeerDataType(P.Value).Fflags;
+      Inc(Col); SLPeers.Cells[Col, Row] := TqBitTorrentPeerDataType(P.Value).Fclient;
+      Inc(Col); SLPeers.Cells[Col, Row] := VarFormatPercent( TqBitTorrentPeerDataType(P.Value).Fprogress );
+      Inc(Col); SLPeers.Cells[Col, Row] := VarFormatBKM( TqBitTorrentPeerDataType(P.Value).Fdl_speed );
+      Inc(Col); SLPeers.Cells[Col, Row] := VarFormatBKM( TqBitTorrentPeerDataType(P.Value).Fup_speed );
+      Inc(Col); SLPeers.Cells[Col, Row] := VarFormatBKM( TqBitTorrentPeerDataType(P.Value).Fdownloaded );
+      Inc(Col); SLPeers.Cells[Col, Row] := VarFormatBKM( TqBitTorrentPeerDataType(P.Value).Fuploaded );
+      Inc(Col); SLPeers.Cells[Col, Row] := VarFormatPercent( TqBitTorrentPeerDataType(P.Value).Frelevance );
+      Inc(Col); SLPeers.Cells[Col, Row] := TqBitTorrentPeerDataType(P.Value).Ffiles;
+      Inc(Row);
+    end;
+    qBTPeers.Free;
+
+  end else
   if (GetLastSelectedTorrent <> Nil) and (PageControl1.ActivePageIndex = 0) then
   begin
     var T := GetLastSelectedTorrent;
