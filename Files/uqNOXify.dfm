@@ -572,7 +572,7 @@ object qNOXifyFrm: TqNOXifyFrm
         DisplayName = 'Torrent'
         FileMask = '*.torrent'
       end>
-    Options = []
+    Options = [fdoAllowMultiSelect, fdoPathMustExist, fdoFileMustExist]
     Left = 392
     Top = 56
   end

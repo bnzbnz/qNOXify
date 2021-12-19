@@ -42,7 +42,7 @@ type
     { Public declarations }
     qB: TqBitObject;
     Prefs : TqBitPreferencesType;
-    FileList: TStringList;
+    FileList: TStrings;
   end;
 
 var

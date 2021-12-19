@@ -308,12 +308,9 @@ procedure TqNOXifyFrm.PMIAddFileClick(Sender: TObject);
 begin
   if OpenTorrent.Execute then
   begin
-    var LF := TStringList.Create;
-    LF.Add(OpenTorrent.FileName);
     AddTorrentDlg.qB := qB;
-    AddTorrentDlg.FileList := LF;
+    AddTorrentDlg.FileList := OpenTorrent.Files;
     AddTorrentDlg.ShowModal;
-    LF.Free;
   end;
 end;
 
@@ -1081,7 +1078,7 @@ begin
         for var Field in RttiType.GetFields do
           if  Field.Name = GD.Field then
           begin
-            SG.Cells[Col, Row] := GD.Formater( Field.GetValue(T).asVariant, nil);
+            SG.Cells[Col, Row] := GD.Formater( Field.GetValue(T).asVariant);
             SG.RowHeights[Row] := ROWHEIGHT;
             GetRowData(Row).Hash := T.Fhash;
             break;
@@ -1269,33 +1266,33 @@ begin
     SGDetails.Cells[4, 4] := 'Wasted : ';
     SGDetails.Cells[4, 5] := 'Last Seen Complete : ';
 
-    SGDetails.Cells[1, 1] := VarFormatDuration(T.Ftime_active, T);
+    SGDetails.Cells[1, 1] := VarFormatDuration(T.Ftime_active);
     SGDetails.Cells[1, 2] := Format('%s (%s this session)',
-      [VarFormatBKM(T.Fdownloaded, T), VarFormatBKM(T.Fdownloaded_session, T)]);
-    SGDetails.Cells[1, 3] := VarFormatBKMPerSec(T.Fdlspeed, T);
-    SGDetails.Cells[1, 4] := VarFormatLimit(T.Fdl_limit, T);
-    SGDetails.Cells[1, 5] := VarFormatFloat2d(T.Fratio, T);
-    SGDetails.Cells[1, 7] := VarFormatBKM(T.Fsize, T);
-    SGDetails.Cells[1, 8] := VarFormatDate(T.Fadded_on, T);
-    SGDetails.Cells[1, 9] := VarFormatString(T.Fhash, T);
-    SGDetails.Cells[1, 10] := VarFormatString(T.Fsave_path, T);
-    SGDetails.Cells[1, 11] := VarFormatString(qbTInfo.Fcomment, qBTInfo);
+      [VarFormatBKM(T.Fdownloaded), VarFormatBKM(T.Fdownloaded_session)]);
+    SGDetails.Cells[1, 3] := VarFormatBKMPerSec(T.Fdlspeed);
+    SGDetails.Cells[1, 4] := VarFormatLimit(T.Fdl_limit);
+    SGDetails.Cells[1, 5] := VarFormatFloat2d(T.Fratio);
+    SGDetails.Cells[1, 7] := VarFormatBKM(T.Fsize);
+    SGDetails.Cells[1, 8] := VarFormatDate(T.Fadded_on);
+    SGDetails.Cells[1, 9] := VarFormatString(T.Fhash);
+    SGDetails.Cells[1, 10] := VarFormatString(T.Fsave_path);
+    SGDetails.Cells[1, 11] := VarFormatString(qbTInfo.Fcomment);
 
-    SGDetails.Cells[3, 1] := VarFormatDeltaSec(T.Feta, T);
+    SGDetails.Cells[3, 1] := VarFormatDeltaSec(T.Feta);
     SGDetails.Cells[3, 2] := Format('%s (%s this session)',
-      [VarFormatBKM(T.Fuploaded, T), VarFormatBKM(T.Fuploaded_session, T)]);
-    SGDetails.Cells[3, 3] := VarFormatBKMPerSec(T.Fupspeed, T);
-    SGDetails.Cells[3, 4] := VarFormatLimit(T.Fup_limit, T);
-      SGDetails.Cells[3, 5] := VarFormatDuration(qBTInfo.Freannounce, T);
+      [VarFormatBKM(T.Fuploaded), VarFormatBKM(T.Fuploaded_session)]);
+    SGDetails.Cells[3, 3] := VarFormatBKMPerSec(T.Fupspeed);
+    SGDetails.Cells[3, 4] := VarFormatLimit(T.Fup_limit);
+      SGDetails.Cells[3, 5] := VarFormatDuration(qBTInfo.Freannounce);
     SGDetails.Cells[3, 7] :=
-      Format('%s x %s (have %s )', [VarToStr(qBTInfo.Fpieces_num), VarFormatBKM(qBTInfo.Fpiece_size, T), VarToStr(qBTInfo.Fpieces_have)]);
-    SGDetails.Cells[3, 8] := VarFormatDate(T.Fcompletion_on, T);
+      Format('%s x %s (have %s )', [VarToStr(qBTInfo.Fpieces_num), VarFormatBKM(qBTInfo.Fpiece_size), VarToStr(qBTInfo.Fpieces_have)]);
+    SGDetails.Cells[3, 8] := VarFormatDate(T.Fcompletion_on);
 
-    SGDetails.Cells[5, 1] := Format('%s (%s max)', [VarToStr(qBTInfo.Fnb_connections), VarFormatLimit(qBTInfo.Fnb_connections_limit, qBTInfo)]);
+    SGDetails.Cells[5, 1] := Format('%s (%s max)', [VarToStr(qBTInfo.Fnb_connections), VarFormatLimit(qBTInfo.Fnb_connections_limit)]);
     SGDetails.Cells[5, 2] := Format('%s (%s total)', [VarToStr(T.Fnum_seeds), qBTInfo.Fseeds_total]);
     SGDetails.Cells[5, 3] := Format('%s (%s total)', [VarToStr(T.Fnum_leechs), qBTInfo.Fpeers_total]);
-    SGDetails.Cells[5, 4] := VarFormatBKM(qBTInfo.Ftotal_wasted, qBTInfo);
-    SGDetails.Cells[5, 5] := VarFormatDate(qBTInfo.Flast_seen, qBTInfo);
+    SGDetails.Cells[5, 4] := VarFormatBKM(qBTInfo.Ftotal_wasted);
+    SGDetails.Cells[5, 5] := VarFormatDate(qBTInfo.Flast_seen);
   end;
 
   SH.Free;
