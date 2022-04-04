@@ -1,12 +1,21 @@
 program qNOXify;
 
 uses
+  {$IFDEF VER340}
+    REST.Json.Types in '..\..\API\JSON\21\REST.Json.Types.pas',
+    REST.JsonReflect in '..\..\API\JSON\21\REST.JsonReflect.pas',
+    System.JSON in '..\..\API\JSON\21\System.JSON.pas',
+    REST.Json in '..\..\API\JSON\21\REST.Json.pas',
+  {$ENDIF }
+  {$IFDEF VER350}
+    REST.Json.Types in '..\..\API\JSON\22\REST.Json.Types.pas',
+    REST.JsonReflect in '..\..\API\JSON\22\REST.JsonReflect.pas',
+    System.JSON in '..\..\API\JSON\22\System.JSON.pas',
+    REST.Json in '..\..\API\JSON\22\REST.Json.pas',
+  {$ENDIF}
+
   Vcl.Forms,
   uqNOXify in 'Files\uqNOXify.pas' {qBitMainForm},
-  REST.Json in '..\qBit4Delphi\API\JSON\22\REST.Json.pas',
-  REST.Json.Types in '..\qBit4Delphi\API\JSON\22\REST.Json.Types.pas',
-  REST.JsonReflect in '..\qBit4Delphi\API\JSON\22\REST.JsonReflect.pas',
-  System.JSON in '..\qBit4Delphi\API\JSON\22\System.JSON.pas',
   uqBitAPI in '..\qBit4Delphi\API\uqBitAPI.pas',
   uqBitAPITypes in '..\qBit4Delphi\API\uqBitAPITypes.pas',
   uqBitObject in '..\qBit4Delphi\API\uqBitObject.pas',
