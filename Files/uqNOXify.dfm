@@ -10,8 +10,10 @@ object qBitMainForm: TqBitMainForm
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  OldCreateOrder = True
   OnDestroy = FormDestroy
   OnShow = FormShow
+  PixelsPerInch = 96
   TextHeight = 13
   object Splitter1: TSplitter
     Left = 0
@@ -1235,6 +1237,11 @@ object qBitMainForm: TqBitMainForm
       item
         Text = 'UlSpeed'
         Width = 164
+      end
+      item
+        Alignment = taCenter
+        Text = 'IP'
+        Width = 20
       end>
     ParentShowHint = False
     PopupMenu = PMStatus

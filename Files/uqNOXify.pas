@@ -6,7 +6,8 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, System.Generics.Collections,
   uqBitAPITypes, uqBitAPI, uqBitObject, Vcl.ExtCtrls, uqBitFormat, Vcl.Menus,
-  Vcl.ComCtrls, uGrid, Vcl.StdCtrls, Vcl.Buttons, Vcl.Grids, uSetLocation, uSelectServer, uAddServer;
+  Vcl.ComCtrls, uGrid, Vcl.StdCtrls, Vcl.Buttons, Vcl.Grids, uSetLocation, uSelectServer, uAddServer,
+  uExternalIP;
 
 const
   THREAD_WAIT_TIME_ME = 1500;
@@ -112,6 +113,8 @@ type
      procedure WMDropFiles(var Msg: TMessage); message WM_DROPFILES;
   public
     { Public declarations }
+
+    IP: TExternalIP;
     qBMain: TqBitMainDataType;
     qBTPeers: TqBitTorrentPeersDataType;
     qBTTrkrs: TqBitTrackersType;
@@ -178,6 +181,8 @@ begin
 
   ThTrkrs := TqBitTTrkrsThread.Create;
   ThTrkrs.qBTh := qB.Clone;
+
+  IP := TExternalIP.FromURL();
 
   FCurrentSelectedHash := '';
   FMainLock := False;
@@ -645,7 +650,7 @@ begin
   // StatusBar;
 
   StatusBar.Panels[0].Text := TitleCase( qBMain.Fserver_state.Fconnection_status );
-  StatusBar.Panels[1].Text := 'Free space: ' + VarFormatBKM(qBMain.Fserver_state.Ffree_space_on_disk);
+  StatusBar.Panels[1].Text := ' Free space: ' + VarFormatBKM(qBMain.Fserver_state.Ffree_space_on_disk);
   StatusBar.Panels[2].Text := Format('DHT: %s nodes', [VarToStr(qBMain.Fserver_state.Fdht_nodes)]);
   if qBMain.Fserver_state.Fuse_alt_speed_limits then
     StatusBar.Panels[3].Text := ' @ ' // ' ? '
@@ -673,7 +678,8 @@ begin
       Format('🡹 %s [?]', [
          VarFormatBKMPerSec(qBMain.Fserver_state.Fup_info_speed)
       ]);
-
+  if assigned(IP) then
+    StatusBar.Panels[6].Text := 'IP : ' + IP.Fip + ' / ' + IP.Fcountry;
   // Caption := qBMain.Ftorrents.Count.ToString;
   Caption :=  Format('qNOXify : %s - %s/%s Torrents',
               [
@@ -807,6 +813,7 @@ end;
 
 procedure TqBitMainForm.FormDestroy(Sender: TObject);
 begin
+  FreeAndNil(IP);
   FreeAndNil(qBPrefs);
   FreeAndNil(ThMain);
   FreeAndNil(ThInfo);

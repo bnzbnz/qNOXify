@@ -142,6 +142,7 @@
         <DCCReference Include="..\qBit4Delphi\Demos\common\uAddServer.pas">
             <Form>AddServerDlg</Form>
         </DCCReference>
+        <DCCReference Include="..\qBit4Delphi\API\Tools\uExternalIP.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
