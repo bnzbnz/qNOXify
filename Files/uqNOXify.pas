@@ -6,8 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, System.Generics.Collections,
   uqBitAPITypes, uqBitAPI, uqBitObject, Vcl.ExtCtrls, uqBitFormat, Vcl.Menus,
-  Vcl.ComCtrls, uGrid, Vcl.StdCtrls, Vcl.Buttons, Vcl.Grids, uSetLocation, uSelectServer, uAddServer,
-  uExternalIP;
+  Vcl.ComCtrls, uGrid, Vcl.StdCtrls, Vcl.Buttons, Vcl.Grids, uSetLocation, uSelectServer, uAddServer, uManageCat;
 
 const
   THREAD_WAIT_TIME_ME = 1500;
@@ -80,6 +79,9 @@ type
     N7: TMenuItem;
     PMISpeedLimits: TMenuItem;
     ITMRename: TMenuItem;
+    N3: TMenuItem;
+    Categories1: TMenuItem;
+    ag1: TMenuItem;
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure BitBtn1Click(Sender: TObject);
@@ -95,6 +97,7 @@ type
     procedure PMISpeedLimitsClick(Sender: TObject);
     procedure ITMAddMagnetURLClick(Sender: TObject);
     procedure ITMRenameClick(Sender: TObject);
+    procedure Categories1Click(Sender: TObject);
   private
     { Private declarations }
     FMainLock : Boolean;
@@ -113,8 +116,6 @@ type
      procedure WMDropFiles(var Msg: TMessage); message WM_DROPFILES;
   public
     { Public declarations }
-
-    IP: TExternalIP;
     qBMain: TqBitMainDataType;
     qBTPeers: TqBitTorrentPeersDataType;
     qBTTrkrs: TqBitTrackersType;
@@ -181,8 +182,6 @@ begin
 
   ThTrkrs := TqBitTTrkrsThread.Create;
   ThTrkrs.qBTh := qB.Clone;
-
-  IP := TExternalIP.FromURL();
 
   FCurrentSelectedHash := '';
   FMainLock := False;
@@ -263,7 +262,7 @@ begin
   var Sel := Self.MainFrame.GetGridSel;
   Result := TStringList.Create;
   for var v in Sel do
-    Result.Add(TqBitTorrentType(TSGData(v).Obj)._FKey);
+    Result.Add(TqBitTorrentType(TSGData(v).Obj).Fhash);
   Sel.Free;
 end;
 
@@ -356,7 +355,7 @@ procedure TqBitMainForm.ITMRenameClick(Sender: TObject);
 begin
   var T := GetLastGridSelTorrent;
   if not assigned(T) then Exit;
-  var K := T._Fkey;
+  var K := T.Fhash;
   var NewName := InputBox('Rename', 'New Name :', T.Fname);
   if  NewName <> '' then qB.SetTorrentName(K, NewName);
 end;
@@ -376,12 +375,12 @@ end;
 procedure TqBitMainForm.ITMSetLocClick(Sender: TObject);
 begin
   var SH := GetGridSelHashes;
+  var NewLoc := '';
   if SH.Count = 1 then
-    SetLocationDlg.Location.Text := Self.GetLastGridSelTorrent.Fsave_path
+    NewLoc := InputBox('Set Location', 'New Location :', Self.GetLastGridSelTorrent.Fsave_path)
   else
-    SetLocationDlg.Location.Text := qBPrefs.Fsave_path;
-  if (SetLocationDlg.ShowModal = mrOk) then
-     qB.SetTorrentLocation(SH, SetLocationDlg.Location.Text);
+    NewLoc := InputBox('Set Location', 'New Location :', '');
+  if NewLoc<>'' then qB.SetTorrentLocation(SH, NewLoc);
   SH.Free;
 end;
 
@@ -431,10 +430,7 @@ begin
 
   var TSortList := TObjectList<TqBitTorrentPeerDataType>.Create(False);
   for var T in qBTPeers.Fpeers do
-  begin
-    TqBitTorrentPeerDataType(T.Value)._FKey := T.Key;
     TSortList.Add(TqBitTorrentPeerDataType(T.Value));
-  end;
 
   TSortList.Sort(TComparer<TqBitTorrentPeerDataType>.Construct(
     function (const L, R: TqBitTorrentPeerDataType): integer
@@ -477,7 +473,7 @@ begin
   if Assigned(qBMain.Ftorrents) then
   for var T in qBMain.Ftorrents do
   begin
-    TqBitTorrentType(T.Value)._FKey := T.Key;
+    TqBitTorrentType(T.Value).Fhash := T.Key;
     TSortList.Add(TqBitTorrentType(T.Value));
   end;
 
@@ -608,7 +604,7 @@ begin
 
   MainFrame.RowUpdateStart;
   for var T in TSortList do
-    MainFrame.AddRow(TqBitTorrentType(T)._FKey, T);
+    MainFrame.AddRow(TqBitTorrentType(T).Fhash, T);
   MainFrame.RowUpdateEnd;
 
   // Displaying Tags
@@ -650,7 +646,7 @@ begin
   // StatusBar;
 
   StatusBar.Panels[0].Text := TitleCase( qBMain.Fserver_state.Fconnection_status );
-  StatusBar.Panels[1].Text := ' Free space: ' + VarFormatBKM(qBMain.Fserver_state.Ffree_space_on_disk);
+  StatusBar.Panels[1].Text := 'Free space: ' + VarFormatBKM(qBMain.Fserver_state.Ffree_space_on_disk);
   StatusBar.Panels[2].Text := Format('DHT: %s nodes', [VarToStr(qBMain.Fserver_state.Fdht_nodes)]);
   if qBMain.Fserver_state.Fuse_alt_speed_limits then
     StatusBar.Panels[3].Text := ' @ ' // ' ? '
@@ -658,9 +654,10 @@ begin
     StatusBar.Panels[3].Text := '  '; // ' ? ';
   if qBMain.Fserver_state.Fdl_rate_limit > 0 then
     StatusBar.Panels[4].Text :=
-      Format('🡻 %s [%s]', [
+      Format('🡻 %s [%s] (%s)', [
          VarFormatBKMPerSec(qBMain.Fserver_state.Fdl_info_speed),
-         VarFormatBKMPerSec(qBMain.Fserver_state.Fdl_rate_limit)
+         VarFormatBKMPerSec(qBMain.Fserver_state.Fdl_rate_limit),
+         VarFormatBKM(qBMain.Fserver_state.Fdl_info_data)
       ])
   else
     StatusBar.Panels[4].Text :=
@@ -669,17 +666,17 @@ begin
       ]);
   if qBMain.Fserver_state.Fup_rate_limit > 0 then
     StatusBar.Panels[5].Text :=
-      Format('🡹 %s [%s]', [
+      Format('🡹 %s [%s] (%s)', [
          VarFormatBKMPerSec(qBMain.Fserver_state.Fup_info_speed),
-         VarFormatBKMPerSec(qBMain.Fserver_state.Fup_rate_limit)
+         VarFormatBKMPerSec(qBMain.Fserver_state.Fup_rate_limit),
+         VarFormatBKM(qBMain.Fserver_state.Fup_info_data)
       ])
   else
     StatusBar.Panels[5].Text :=
       Format('🡹 %s [?]', [
          VarFormatBKMPerSec(qBMain.Fserver_state.Fup_info_speed)
       ]);
-  if assigned(IP) then
-    StatusBar.Panels[6].Text := 'IP : ' + IP.Fip + ' / ' + IP.Fcountry;
+
   // Caption := qBMain.Ftorrents.Count.ToString;
   Caption :=  Format('qNOXify : %s - %s/%s Torrents',
               [
@@ -790,7 +787,7 @@ begin
     SGDetails.Cells[1, 5] := VarFormatFloat2d(T.Fratio);
     SGDetails.Cells[1, 7] := VarFormatBKM(T.Fsize);
     SGDetails.Cells[1, 8] := VarFormatDate(T.Fadded_on);
-    SGDetails.Cells[1, 9] := VarFormatString(T._Fkey);
+    SGDetails.Cells[1, 9] := VarFormatString(T.Fhash);
     SGDetails.Cells[1, 10] := VarFormatString(T.Fsave_path);
     SGDetails.Cells[1, 11] := VarFormatString(qbTInfo.Fcomment);
 
@@ -813,7 +810,6 @@ end;
 
 procedure TqBitMainForm.FormDestroy(Sender: TObject);
 begin
-  FreeAndNil(IP);
   FreeAndNil(qBPrefs);
   FreeAndNil(ThMain);
   FreeAndNil(ThInfo);
@@ -834,6 +830,12 @@ end;
 procedure TqBitMainForm.BitBtn1Click(Sender: TObject);
 begin
   Self.EditSearch.Clear
+end;
+
+procedure TqBitMainForm.Categories1Click(Sender: TObject);
+begin
+  MgeCatDlg.qB := qB;
+  MgeCatDlg.ShowModal;
 end;
 
 procedure TqBitMainForm.DoMainEventPopup(Sender: TObject; X, Y, aCol,
