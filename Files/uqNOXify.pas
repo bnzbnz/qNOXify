@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, System.Generics.Collections,
   uqBitAPITypes, uqBitAPI, uqBitObject, Vcl.ExtCtrls, uqBitFormat, Vcl.Menus,
-  Vcl.ComCtrls, uGrid, Vcl.StdCtrls, Vcl.Buttons, Vcl.Grids, uSetLocation, uSelectServer, uAddServer, uManageCat;
+  Vcl.ComCtrls, uGrid, Vcl.StdCtrls, Vcl.Buttons, Vcl.Grids, uSetLocation, uSelectServer, uAddServer;
 
 const
   THREAD_WAIT_TIME_ME = 1500;
@@ -79,9 +79,6 @@ type
     N7: TMenuItem;
     PMISpeedLimits: TMenuItem;
     ITMRename: TMenuItem;
-    N3: TMenuItem;
-    Categories1: TMenuItem;
-    ag1: TMenuItem;
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure BitBtn1Click(Sender: TObject);
@@ -97,7 +94,6 @@ type
     procedure PMISpeedLimitsClick(Sender: TObject);
     procedure ITMAddMagnetURLClick(Sender: TObject);
     procedure ITMRenameClick(Sender: TObject);
-    procedure Categories1Click(Sender: TObject);
   private
     { Private declarations }
     FMainLock : Boolean;
@@ -193,7 +189,7 @@ begin
   MainFrame.OnPopupEvent := Self.DoMainEventPopup;
 
   var Row := -1;
-  Inc(Row); MainFrame.AddCol(Row, 'Name', 'Fname', VarFormatString, 240, True);
+  Inc(Row); MainFrame.AddCol(Row, 'Name', 'Fname', VarFormatString, 320, True);
   Inc(Row); MainFrame.AddCol(Row, 'Size', 'Fsize', VarFormatBKM, 84, True);
   Inc(Row); MainFrame.AddCol(Row, 'Total Size', 'Ftotal_size', VarFormatBKM, -1, True);
   Inc(Row); MainFrame.AddCol(Row, 'Progress', 'Fprogress', VarFormatPercent, 84, True);
@@ -222,6 +218,7 @@ begin
   for var field in rttitype.GetFields do
   begin
     var Title := 'Raw: ' + field.Name;
+    if pos('_', field.Name) = 1 then continue;
     Inc(Row); MainFrame.AddCol(Row, Title, field.Name, VarFormatString, -2, False);
   end;
   rttictx.Free;
@@ -830,12 +827,6 @@ end;
 procedure TqBitMainForm.BitBtn1Click(Sender: TObject);
 begin
   Self.EditSearch.Clear
-end;
-
-procedure TqBitMainForm.Categories1Click(Sender: TObject);
-begin
-  MgeCatDlg.qB := qB;
-  MgeCatDlg.ShowModal;
 end;
 
 procedure TqBitMainForm.DoMainEventPopup(Sender: TObject; X, Y, aCol,

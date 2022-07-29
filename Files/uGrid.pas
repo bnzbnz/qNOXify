@@ -10,7 +10,7 @@ uses
   uAppTrackMenus;
 
 const
-  MAXCOL = 70;
+  MAXCOL = 71;
   MAXROW = 2000;
   ROWHEIGHT = 18;
   NoSelection: TGridRect = (Left: 0; Top: -1; Right: 0; Bottom: -1);
@@ -268,7 +268,7 @@ end;
 
 function TSGFrm.AddCol(Index: Integer; Name, Field: string; Fmt: TVarDataFormater; Width: Integer; Visible: Boolean): TSGData;
 begin
-  Result:= TSGData(SG.Objects[Index, 0]);;
+  Result:= TSGData(SG.Objects[Index, 0]);
   SG.ColWidths[Index] := Width;
   SG.RowHeights[0] := ROWHEIGHT;
   SG.Cells[Index, 0] := Name;
