@@ -6,9 +6,10 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, System.Generics.Collections,
   uqBitAPITypes, uqBitAPI, uqBitObject, Vcl.ExtCtrls, uqBitFormat, Vcl.Menus,
-  Vcl.ComCtrls, uGrid, Vcl.StdCtrls, Vcl.Buttons, Vcl.Grids, uSetLocation, uSelectServer, uAddServer;
+  Vcl.ComCtrls, uGrid, Vcl.StdCtrls, Vcl.Buttons, Vcl.Grids, uSetLocation, uqBitSelectServerDlg;
 
 const
+  QBIT4DELPHI_COMPAT_VERSION = '1.100.2.8.3';
   THREAD_WAIT_TIME_ME = 1500;
 
 type
@@ -117,7 +118,6 @@ type
     qBTTrkrs: TqBitTrackersType;
     qBTInfo: TqBitTorrentInfoType;
 
-
     // UI
     procedure UpdateMainUI;
     procedure UpdatePeersUI;
@@ -153,15 +153,22 @@ uses RTTI, System.Generics.Defaults, uAddTorrent, uSpeedLimitsDlg, ShellAPI;
 
 procedure TqBitMainForm.FormShow(Sender: TObject);
 begin
+  if TqBitObject.Version <> QBIT4DELPHI_COMPAT_VERSION then
+  begin
+    ShowMessage( Format('qBit4Delphi Release %s is required...', [QBIT4DELPHI_COMPAT_VERSION]) );
+    PostMessage(Handle, WM_CLOSE, 0, 0);
+    Exit;
+  end;
+
   SGDetails.Selection := NoSelection;
   DragAcceptFiles (Self.handle, True);
 
-  if SelectServerDlg.ShowModal = mrCancel then
+  if qBitSelectServerDlg.ShowModal = mrCancel then
   begin
-    Close;
+    PostMessage(Handle, WM_CLOSE, 0, 0);
     Exit;
   end;
-  var Srv := SelectServerDlg.GetServer;
+  var Srv := qBitSelectServerDlg.GetServer;
   qB := TqBitObject.Connect(Srv.FHP, Srv.FUN, Srv.FPW);
   if not assigned(qB) then Exit;
 

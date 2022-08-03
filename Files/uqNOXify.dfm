@@ -5,11 +5,13 @@ object qBitMainForm: TqBitMainForm
   ClientHeight = 582
   ClientWidth = 941
   Color = clBtnFace
+  DefaultMonitor = dmMainForm
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  Position = poScreenCenter
   OnDestroy = FormDestroy
   OnShow = FormShow
   TextHeight = 13
