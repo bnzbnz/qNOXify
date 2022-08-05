@@ -10,7 +10,7 @@ uses
   uAppTrackMenus;
 
 const
-  MAXCOL = 71;
+  MAXCOL = 100;
   MAXROW = 2000;
   ROWHEIGHT = 18;
   NoSelection: TGridRect = (Left: 0; Top: -1; Right: 0; Bottom: -1);
@@ -73,8 +73,6 @@ type
     { Public declarations }
     SortField: string;
     SortReverse: boolean;
-    //LastSelectedHash: string;
-    //LastSelectedData: TObject;
 
     function  AddCol(Index: Integer; Name, Field: string; Fmt: TVarDataFormater; Width: Integer; Visible: Boolean): TSGData;
     procedure AddRow(K: string; V: TObject);

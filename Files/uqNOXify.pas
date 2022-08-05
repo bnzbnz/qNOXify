@@ -55,14 +55,12 @@ type
     CBStatus: TComboBox;
     Label3: TLabel;
     CBCat: TComboBox;
-    StatusBar: TStatusBar;
     Splitter1: TSplitter;
     Label4: TLabel;
     CBTag: TComboBox;
     SGDetails: TStringGrid;
     PMMain: TPopupMenu;
     ITMSelectAll: TMenuItem;
-    SelectAll2: TMenuItem;
     ITMPause: TMenuItem;
     ITMResume: TMenuItem;
     N1: TMenuItem;
@@ -80,6 +78,14 @@ type
     N7: TMenuItem;
     PMISpeedLimits: TMenuItem;
     ITMRename: TMenuItem;
+    Panel2: TPanel;
+    StatusBar: TStatusBar;
+    N3: TMenuItem;
+    N4: TMenuItem;
+    ForceReannoune1: TMenuItem;
+    AtomaticTorrentManagement1: TMenuItem;
+    On1: TMenuItem;
+    Off1: TMenuItem;
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure BitBtn1Click(Sender: TObject);
@@ -95,6 +101,10 @@ type
     procedure PMISpeedLimitsClick(Sender: TObject);
     procedure ITMAddMagnetURLClick(Sender: TObject);
     procedure ITMRenameClick(Sender: TObject);
+    procedure N4Click(Sender: TObject);
+    procedure ForceReannoune1Click(Sender: TObject);
+    procedure On1Click(Sender: TObject);
+    procedure Off1Click(Sender: TObject);
   private
     { Private declarations }
     FMainLock : Boolean;
@@ -147,7 +157,7 @@ var
 
 
 implementation
-uses RTTI, System.Generics.Defaults, uAddTorrent, uSpeedLimitsDlg, ShellAPI;
+uses RTTI, System.Generics.Defaults, uqBitAddTorrentDlg, uSpeedLimitsDlg, ShellAPI;
 
 {$R *.dfm}
 
@@ -203,10 +213,10 @@ begin
   Inc(Row); MainFrame.AddCol(Row, 'Status', 'Fstate', VarFormatString, 84, True);
   Inc(Row); MainFrame.AddCol(Row, 'Seeds', 'Fnum_seeds', VarFormatString, 84, True);
   Inc(Row); MainFrame.AddCol(Row, 'Peers', 'Fnum_leechs', VarFormatString, 84, True);
+  Inc(Row); MainFrame.AddCol(Row, 'Ratio', 'Fratio', VarFormatFloat2d, 36, True);
   Inc(Row); MainFrame.AddCol(Row, 'Down Speed', 'Fdlspeed', VarFormatBKMPerSec, 84, True);
   Inc(Row); MainFrame.AddCol(Row, 'Upload Speed', 'Fupspeed', VarFormatBKMPerSec, 84, True);
   Inc(Row); MainFrame.AddCol(Row, 'ETA', 'Feta', VarFormatDeltaSec, 128, True);
-  Inc(Row); MainFrame.AddCol(Row, 'Ratio', 'Fratio', VarFormatFloat2d, 84, True);
   Inc(Row); MainFrame.AddCol(Row, 'Category', 'Fcategory', VarFormatString, 84, True);
   Inc(Row); MainFrame.AddCol(Row, 'Tags', 'Ftags', VarFormatString, 84, True);
   Inc(Row); MainFrame.AddCol(Row, 'Added On', 'Fadded_on', VarFormatDate, 128, True);
@@ -297,17 +307,13 @@ end;
 procedure TqBitMainForm.ITMAddTFileClick(Sender: TObject);
 begin
   if OpenTorrent.Execute then
-  begin
-    AddTorrentDlg.qB := qB;
-    AddTorrentDlg.FileList := OpenTorrent.Files;
-    AddTorrentDlg.ShowModal;
-  end;
+  qBitAddTorrentDlg.ShowAsModal(qB, qBMain, OpenTorrent.Files);
 end;
 
 procedure TqBitMainForm.WMDropFiles(var Msg: TMessage);
 var
   hDrop: THandle;
-  FileNAme: string;
+  FileName: WideString;
 begin
   var FL := TStringList.Create;
   hDrop:= Msg.wParam;
@@ -321,15 +327,10 @@ begin
     FL.Add(FileName);
   end;
   if FL.Count > 0 then
-  begin
-    AddTorrentDlg.qB := qB;
-    AddTorrentDlg.FileList := FL;
-    AddTorrentDlg.ShowModal;
-  end;
+    qBitAddTorrentDlg.ShowAsModal(qB, qBMain, FL);
   FL.Free;
   DragFinish(hDrop);
 end;
-
 
 procedure TqBitMainForm.ITMDelTOnlyClick(Sender: TObject);
 begin
@@ -385,6 +386,35 @@ begin
   else
     NewLoc := InputBox('Set Location', 'New Location :', '');
   if NewLoc<>'' then qB.SetTorrentLocation(SH, NewLoc);
+  SH.Free;
+end;
+
+procedure TqBitMainForm.N4Click(Sender: TObject);
+begin
+  var SH := GetGridSelHashes;
+  qB.RecheckTorrents(SH);
+  SH.Free;
+end;
+
+
+procedure TqBitMainForm.ForceReannoune1Click(Sender: TObject);
+begin
+  var SH := GetGridSelHashes;
+  qB.ReannounceTorrents(SH);
+  SH.Free;
+end;
+
+procedure TqBitMainForm.Off1Click(Sender: TObject);
+begin
+  var SH := GetGridSelHashes;
+  qB.SetAutomaticTorrentManagement(SH, False);
+  SH.Free;
+end;
+
+procedure TqBitMainForm.On1Click(Sender: TObject);
+begin
+  var SH := GetGridSelHashes;
+  qB.SetAutomaticTorrentManagement(SH, True);
   SH.Free;
 end;
 
@@ -653,32 +683,34 @@ begin
   StatusBar.Panels[1].Text := 'Free space: ' + VarFormatBKM(qBMain.Fserver_state.Ffree_space_on_disk);
   StatusBar.Panels[2].Text := Format('DHT: %s nodes', [VarToStr(qBMain.Fserver_state.Fdht_nodes)]);
   if qBMain.Fserver_state.Fuse_alt_speed_limits then
-    StatusBar.Panels[3].Text := ' @ ' // ' ? '
+    StatusBar.Panels[3].Text := ' @'
   else
-    StatusBar.Panels[3].Text := '  '; // ' ? ';
+    StatusBar.Panels[3].Text := '  - ';
   if qBMain.Fserver_state.Fdl_rate_limit > 0 then
     StatusBar.Panels[4].Text :=
-      Format('🡻 %s [%s] (%s)', [
+      Format('🡻 %s  [%s] (%s)', [
          VarFormatBKMPerSec(qBMain.Fserver_state.Fdl_info_speed),
          VarFormatBKMPerSec(qBMain.Fserver_state.Fdl_rate_limit),
          VarFormatBKM(qBMain.Fserver_state.Fdl_info_data)
       ])
   else
     StatusBar.Panels[4].Text :=
-      Format('🡻 %s [?]', [
-         VarFormatBKMPerSec(qBMain.Fserver_state.Fdl_info_speed)
+      Format('🡻 %s  [∞] (%s)', [
+         VarFormatBKMPerSec(qBMain.Fserver_state.Fdl_info_speed),
+         VarFormatBKM(qBMain.Fserver_state.Fdl_info_data)
       ]);
   if qBMain.Fserver_state.Fup_rate_limit > 0 then
     StatusBar.Panels[5].Text :=
-      Format('🡹 %s [%s] (%s)', [
+      Format('🡹 %s  [%s] (%s)', [
          VarFormatBKMPerSec(qBMain.Fserver_state.Fup_info_speed),
          VarFormatBKMPerSec(qBMain.Fserver_state.Fup_rate_limit),
          VarFormatBKM(qBMain.Fserver_state.Fup_info_data)
       ])
   else
     StatusBar.Panels[5].Text :=
-      Format('🡹 %s [?]', [
-         VarFormatBKMPerSec(qBMain.Fserver_state.Fup_info_speed)
+      Format('🡹 %s  [∞] (%s)', [
+         VarFormatBKMPerSec(qBMain.Fserver_state.Fup_info_speed),
+         VarFormatBKM(qBMain.Fserver_state.Fup_info_data)
       ]);
 
   // Caption := qBMain.Ftorrents.Count.ToString;
@@ -831,6 +863,8 @@ end;
 
 {$REGION 'Frames callbacks'}
 
+
+
 procedure TqBitMainForm.BitBtn1Click(Sender: TObject);
 begin
   Self.EditSearch.Clear
@@ -896,7 +930,8 @@ end;
 
 procedure TqBitMainForm.ThreadDisconnect(Sender: TThread);
 begin
-  //
+  ShowMessage('You have been disconnected ! Exiting...');
+  PostMessage(Handle, WM_CLOSE, 0, 0);
 end;
 
 procedure TqBitMainForm.ThreadMainUpdated(Sender: TqBitMainThread);

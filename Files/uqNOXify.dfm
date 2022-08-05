@@ -2,8 +2,8 @@ object qBitMainForm: TqBitMainForm
   Left = 0
   Top = 0
   Caption = 'qBitMainForm'
-  ClientHeight = 582
-  ClientWidth = 941
+  ClientHeight = 566
+  ClientWidth = 1082
   Color = clBtnFace
   DefaultMonitor = dmMainForm
   Font.Charset = DEFAULT_CHARSET
@@ -17,8 +17,8 @@ object qBitMainForm: TqBitMainForm
   TextHeight = 13
   object Splitter1: TSplitter
     Left = 0
-    Top = 269
-    Width = 941
+    Top = 563
+    Width = 1082
     Height = 3
     Cursor = crVSplit
     Align = alBottom
@@ -28,18 +28,20 @@ object qBitMainForm: TqBitMainForm
   inline MainFrame: TSGFrm
     Left = 0
     Top = 65
-    Width = 941
-    Height = 204
+    Width = 1082
+    Height = 245
     Align = alClient
     TabOrder = 0
     ExplicitTop = 65
-    ExplicitWidth = 941
-    ExplicitHeight = 204
+    ExplicitWidth = 1082
+    ExplicitHeight = 245
     inherited SG: TStringGrid
-      Width = 941
-      Height = 204
-      ExplicitWidth = 941
-      ExplicitHeight = 204
+      Width = 1082
+      Height = 245
+      DoubleBuffered = True
+      ParentDoubleBuffered = False
+      ExplicitWidth = 1082
+      ExplicitHeight = 245
       RowHeights = (
         18
         18
@@ -1046,7 +1048,7 @@ object qBitMainForm: TqBitMainForm
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 941
+    Width = 1082
     Height = 65
     Align = alTop
     TabOrder = 1
@@ -1140,9 +1142,9 @@ object qBitMainForm: TqBitMainForm
   end
   object PageControl1: TPageControl
     Left = 0
-    Top = 272
-    Width = 941
-    Height = 291
+    Top = 310
+    Width = 1082
+    Height = 232
     ActivePage = TabSheet1
     Align = alBottom
     TabOrder = 2
@@ -1152,8 +1154,8 @@ object qBitMainForm: TqBitMainForm
       object SGDetails: TStringGrid
         Left = 0
         Top = 0
-        Width = 933
-        Height = 263
+        Width = 1074
+        Height = 204
         Align = alClient
         Color = clBtnFace
         ColCount = 10
@@ -1173,17 +1175,17 @@ object qBitMainForm: TqBitMainForm
       inline PeersFrame: TSGFrm
         Left = 0
         Top = 0
-        Width = 933
-        Height = 263
+        Width = 1074
+        Height = 204
         Align = alClient
         TabOrder = 0
-        ExplicitWidth = 933
-        ExplicitHeight = 263
+        ExplicitWidth = 1074
+        ExplicitHeight = 204
         inherited SG: TStringGrid
-          Width = 933
-          Height = 263
-          ExplicitWidth = 933
-          ExplicitHeight = 263
+          Width = 1074
+          Height = 204
+          ExplicitWidth = 1074
+          ExplicitHeight = 204
         end
       end
     end
@@ -1193,60 +1195,65 @@ object qBitMainForm: TqBitMainForm
       inline TrkrFrame: TSGFrm
         Left = 0
         Top = 0
-        Width = 933
-        Height = 263
-        Align = alClient
+        Width = 1074
+        Height = 451
         TabOrder = 0
-        ExplicitWidth = 933
-        ExplicitHeight = 263
+        ExplicitWidth = 1074
+        ExplicitHeight = 451
         inherited SG: TStringGrid
-          Width = 933
-          Height = 263
-          ExplicitWidth = 933
-          ExplicitHeight = 263
+          Width = 1074
+          Height = 451
+          ExplicitWidth = 1074
+          ExplicitHeight = 451
         end
       end
     end
   end
-  object StatusBar: TStatusBar
+  object Panel2: TPanel
     Left = 0
-    Top = 563
-    Width = 941
-    Height = 19
-    Panels = <
-      item
-        Text = 'Connection Status'
-        Width = 100
-      end
-      item
-        Text = 'Free Space'
-        Width = 164
-      end
-      item
-        Text = 'DHT'
-        Width = 120
-      end
-      item
-        Text = 'AltS'
-        Width = 26
-      end
-      item
-        Text = 'DSpeed'
-        Width = 164
-      end
-      item
-        Text = 'UlSpeed'
-        Width = 164
-      end
-      item
-        Alignment = taCenter
-        Text = 'IP'
-        Width = 20
-      end>
-    ParentShowHint = False
-    PopupMenu = PMStatus
-    ShowHint = False
-    OnClick = StatusBarClick
+    Top = 542
+    Width = 1082
+    Height = 21
+    Align = alBottom
+    BevelOuter = bvSpace
+    Caption = 'Panel2'
+    TabOrder = 3
+    object StatusBar: TStatusBar
+      Left = 1
+      Top = -4
+      Width = 1080
+      Height = 24
+      Panels = <
+        item
+          Text = 'Connection Status'
+          Width = 100
+        end
+        item
+          Text = 'Free Space'
+          Width = 165
+        end
+        item
+          Text = 'DHT'
+          Width = 120
+        end
+        item
+          Text = 'AltS'
+          Width = 24
+        end
+        item
+          Text = 'DSpeed'
+          Width = 250
+        end
+        item
+          Text = 'USpeed'
+          Width = 250
+        end>
+      ParentShowHint = False
+      PopupMenu = PMStatus
+      ShowHint = False
+      OnClick = StatusBarClick
+      ExplicitTop = -3
+    end
   end
   object PMMain: TPopupMenu
     Left = 216
@@ -1254,9 +1261,6 @@ object qBitMainForm: TqBitMainForm
     object ITMSelectAll: TMenuItem
       Caption = 'Select All'
       OnClick = ITMSelectAllClick
-    end
-    object SelectAll2: TMenuItem
-      Caption = '-'
     end
     object ITMPause: TMenuItem
       Caption = 'Pause'
@@ -1301,6 +1305,28 @@ object qBitMainForm: TqBitMainForm
     object ITMRename: TMenuItem
       Caption = 'Rename'
       OnClick = ITMRenameClick
+    end
+    object AtomaticTorrentManagement1: TMenuItem
+      Caption = 'Automatic Torrent Management'
+      object On1: TMenuItem
+        Caption = 'On'
+        OnClick = On1Click
+      end
+      object Off1: TMenuItem
+        Caption = 'Off'
+        OnClick = Off1Click
+      end
+    end
+    object N3: TMenuItem
+      Caption = '-'
+    end
+    object N4: TMenuItem
+      Caption = 'Force Recheck'
+      OnClick = N4Click
+    end
+    object ForceReannoune1: TMenuItem
+      Caption = 'Force Reannoune'
+      OnClick = ForceReannoune1Click
     end
   end
   object OpenTorrent: TFileOpenDialog

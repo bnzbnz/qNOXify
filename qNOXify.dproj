@@ -112,23 +112,25 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="..\qBit4Delphi\API\JSON\21\REST.Json.Types.pas"/>
-        <DCCReference Include="..\qBit4Delphi\API\JSON\22\REST.Json.Types.pas"/>
-        <DCCReference Include="..\qBit4Delphi\Demos\common\uPatcherChecker.pas"/>
+        <DCCReference Include="qBit4Delphi\API\JSON\21\REST.Json.Types.pas"/>
+        <DCCReference Include="qBit4Delphi\API\JSON\22\REST.Json.Types.pas"/>
+        <DCCReference Include="qBit4Delphi\API\JSON\22\REST.JsonReflect.pas"/>
+        <DCCReference Include="qBit4Delphi\API\JSON\22\System.JSON.pas"/>
+        <DCCReference Include="qBit4Delphi\API\JSON\22\REST.Json.pas"/>
+        <DCCReference Include="qBit4Delphi\Demos\common\uqBitPatchChecker.pas"/>
         <DCCReference Include="Files\uqNOXify.pas">
             <Form>qBitMainForm</Form>
         </DCCReference>
-        <DCCReference Include="..\qBit4Delphi\API\uqBitAPI.pas"/>
-        <DCCReference Include="..\qBit4Delphi\API\uqBitAPITypes.pas"/>
-        <DCCReference Include="..\qBit4Delphi\API\uqBitObject.pas"/>
-        <DCCReference Include="..\qBit4Delphi\Demos\common\uqBitFormat.pas"/>
-        <DCCReference Include="..\qBit4Delphi\Demos\common\uAppTrackMenus.pas"/>
+        <DCCReference Include="qBit4Delphi\API\uqBitAPITypes.pas"/>
+        <DCCReference Include="qBit4Delphi\API\uqBitAPI.pas"/>
+        <DCCReference Include="qBit4Delphi\API\uqBitObject.pas"/>
+        <DCCReference Include="Files\uAppTrackMenus.pas"/>
         <DCCReference Include="Files\uGrid.pas">
             <Form>SGFrm</Form>
             <DesignClass>TFrame</DesignClass>
         </DCCReference>
-        <DCCReference Include="Files\uAddTorrent.pas">
-            <Form>AddTorrentDlg</Form>
+        <DCCReference Include="Files\uqBitAddTorrentDlg.pas">
+            <Form>qBitAddTorrentDlg</Form>
         </DCCReference>
         <DCCReference Include="Files\uSetLocation.pas">
             <Form>SetLocationDlg</Form>
@@ -136,22 +138,26 @@
         <DCCReference Include="Files\uSpeedLimitsDlg.pas">
             <Form>SpeedLimitsDlg</Form>
         </DCCReference>
-        <DCCReference Include="..\qBit4Delphi\Demos\common\uSelectServer.pas">
-            <Form>SelectServerDlg</Form>
+        <DCCReference Include="qBit4Delphi\Demos\common\uqBitAddServerDlg.pas">
+            <Form>qBitAddServerDlg</Form>
+            <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="..\qBit4Delphi\Demos\common\uAddServer.pas">
-            <Form>AddServerDlg</Form>
+        <DCCReference Include="qBit4Delphi\Demos\common\uqBitSelectServerDlg.pas">
+            <Form>qBitSelectServerDlg</Form>
+            <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="..\qBit4Delphi\API\Tools\uExternalIP.pas"/>
-        <BuildConfiguration Include="Release">
-            <Key>Cfg_2</Key>
-            <CfgParent>Base</CfgParent>
-        </BuildConfiguration>
+        <DCCReference Include="qBit4Delphi\API\Tools\uTorrentReader.pas"/>
+        <DCCReference Include="qBit4Delphi\API\Tools\uBEncode.pas"/>
+        <DCCReference Include="qBit4Delphi\Demos\common\uqBitFormat.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_1</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Release">
+            <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
         </BuildConfiguration>
     </ItemGroup>
@@ -170,16 +176,16 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
-                <DeployFile LocalName="qNOXify.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win32">
-                        <RemoteName>qNOXify.exe</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
                 <DeployFile LocalName="Files\qNOXify.ico" Configuration="Debug" Class="UWP_DelphiLogo44">
                     <Platform Name="Win32">
                         <RemoteDir>Assets\</RemoteDir>
                         <RemoteName>Logo44x44.png</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="qNOXify.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>qNOXify.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -506,6 +512,11 @@
                         <Operation>1</Operation>
                         <Extensions>.framework</Extensions>
                     </Platform>
+                    <Platform Name="OSXARM64">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
+                        <Operation>1</Operation>
+                        <Extensions>.framework</Extensions>
+                    </Platform>
                     <Platform Name="Win32">
                         <Operation>0</Operation>
                     </Platform>
@@ -529,6 +540,11 @@
                         <Extensions>.dylib</Extensions>
                     </Platform>
                     <Platform Name="OSX64">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
+                    <Platform Name="OSXARM64">
                         <RemoteDir>Contents\MacOS</RemoteDir>
                         <Operation>1</Operation>
                         <Extensions>.dylib</Extensions>
@@ -561,6 +577,11 @@
                         <Operation>1</Operation>
                         <Extensions>.dylib</Extensions>
                     </Platform>
+                    <Platform Name="OSXARM64">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
+                        <Operation>1</Operation>
+                        <Extensions>.dylib</Extensions>
+                    </Platform>
                     <Platform Name="Win32">
                         <Operation>0</Operation>
                         <Extensions>.bpl</Extensions>
@@ -587,6 +608,10 @@
                         <Operation>0</Operation>
                     </Platform>
                     <Platform Name="OSX64">
+                        <RemoteDir>Contents\Resources\StartUp\</RemoteDir>
+                        <Operation>0</Operation>
+                    </Platform>
+                    <Platform Name="OSXARM64">
                         <RemoteDir>Contents\Resources\StartUp\</RemoteDir>
                         <Operation>0</Operation>
                     </Platform>
@@ -855,6 +880,10 @@
                         <RemoteDir>..\$(PROJECTNAME).app.dSYM\Contents\Resources\DWARF</RemoteDir>
                         <Operation>1</Operation>
                     </Platform>
+                    <Platform Name="OSXARM64">
+                        <RemoteDir>..\$(PROJECTNAME).app.dSYM\Contents\Resources\DWARF</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
                 </DeployClass>
                 <DeployClass Name="ProjectOSXEntitlements">
                     <Platform Name="OSX32">
@@ -862,6 +891,10 @@
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="OSX64">
+                        <RemoteDir>..\</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="OSXARM64">
                         <RemoteDir>..\</RemoteDir>
                         <Operation>1</Operation>
                     </Platform>
@@ -875,6 +908,10 @@
                         <RemoteDir>Contents</RemoteDir>
                         <Operation>1</Operation>
                     </Platform>
+                    <Platform Name="OSXARM64">
+                        <RemoteDir>Contents</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
                 </DeployClass>
                 <DeployClass Name="ProjectOSXResource">
                     <Platform Name="OSX32">
@@ -882,6 +919,10 @@
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="OSX64">
+                        <RemoteDir>Contents\Resources</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="OSXARM64">
                         <RemoteDir>Contents\Resources</RemoteDir>
                         <Operation>1</Operation>
                     </Platform>
@@ -912,6 +953,10 @@
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="OSX64">
+                        <RemoteDir>Contents\MacOS</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="OSXARM64">
                         <RemoteDir>Contents\MacOS</RemoteDir>
                         <Operation>1</Operation>
                     </Platform>
@@ -953,17 +998,17 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
-                <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
-                <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>
-                <ProjectRoot Platform="OSXARM64" Name="$(PROJECTNAME).app"/>
-                <ProjectRoot Platform="Linux64" Name="$(PROJECTNAME)"/>
-                <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
-                <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="Android" Name="$(PROJECTNAME)"/>
-                <ProjectRoot Platform="OSX64" Name="$(PROJECTNAME).app"/>
-                <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="Android64" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="Linux64" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="OSX64" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="OSXARM64" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
             </Deployment>
             <Platforms>
                 <Platform value="Win32">True</Platform>
