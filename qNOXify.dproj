@@ -115,13 +115,13 @@
         <DCCReference Include="qBit4Delphi\API\JSON\21\REST.Json.Types.pas"/>
         <DCCReference Include="..\qBit4Delphi\API\JSON\21\REST.Json.Types.pas"/>
         <DCCReference Include="qBit4Delphi\API\JSON\22\REST.Json.Types.pas"/>
+        <DCCReference Include="qBit4Delphi\API\JSON\22\REST.JsonReflect.pas"/>
+        <DCCReference Include="qBit4Delphi\API\JSON\22\System.JSON.pas"/>
+        <DCCReference Include="qBit4Delphi\API\JSON\22\REST.Json.pas"/>
+        <DCCReference Include="qBit4Delphi\API\uqBitAPITypes.pas"/>
+        <DCCReference Include="qBit4Delphi\API\uqBitAPI.pas"/>
+        <DCCReference Include="qBit4Delphi\API\uqBitObject.pas"/>
         <DCCReference Include="..\qBit4Delphi\API\JSON\22\REST.Json.Types.pas"/>
-        <DCCReference Include="..\qBit4Delphi\API\JSON\22\REST.JsonReflect.pas"/>
-        <DCCReference Include="..\qBit4Delphi\API\JSON\22\System.JSON.pas"/>
-        <DCCReference Include="..\qBit4Delphi\API\JSON\22\REST.Json.pas"/>
-        <DCCReference Include="..\qBit4Delphi\API\uqBitAPITypes.pas"/>
-        <DCCReference Include="..\qBit4Delphi\API\uqBitAPI.pas"/>
-        <DCCReference Include="..\qBit4Delphi\API\uqBitObject.pas"/>
         <DCCReference Include="qBit4Delphi\Demos\common\uqBitPatchChecker.pas"/>
         <DCCReference Include="Files\uqNOXify.pas">
             <Form>qBitMainForm</Form>

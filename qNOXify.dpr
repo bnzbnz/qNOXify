@@ -2,10 +2,10 @@ program qNOXify;
 uses
 
   {$IFDEF DEBUG}
-    FastMM4,    // Can be removed if not present
+    FastMM4,    //  MPL 1.1, LGPL 2.1 (https://github.com/pleriche/FastMM4)  << Can be removed if not used
   {$ENDIF}
 
-  {$DEFINE USEDEVAPI} // Switch between last Release and Main Dev.
+  {$UNDEF USEDEVAPI} // Switch between last Release and Main Dev.
 
   {$IFDEF VER340}  // Delphi 10.4 Sydney
     {$IFNDEF USEDEVAPI}
