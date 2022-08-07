@@ -38,8 +38,6 @@ object qBitMainForm: TqBitMainForm
     inherited SG: TStringGrid
       Width = 1082
       Height = 245
-      DoubleBuffered = True
-      ParentDoubleBuffered = False
       ExplicitWidth = 1082
       ExplicitHeight = 245
       RowHeights = (
@@ -1160,7 +1158,7 @@ object qBitMainForm: TqBitMainForm
         Color = clBtnFace
         ColCount = 10
         DefaultColWidth = 192
-        DefaultRowHeight = 18
+        DefaultRowHeight = 12
         FixedCols = 0
         RowCount = 20
         FixedRows = 0
@@ -1252,7 +1250,6 @@ object qBitMainForm: TqBitMainForm
       PopupMenu = PMStatus
       ShowHint = False
       OnClick = StatusBarClick
-      ExplicitTop = -3
     end
   end
   object PMMain: TPopupMenu

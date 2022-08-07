@@ -75,7 +75,7 @@ var
   qBitAddTorrentDlg: TqBitAddTorrentDlg;
 
 implementation
-uses Math, uTorrentReader, uqBitFormat;
+uses Math, uTorrentReader, uqBitFormat, uqBitUtils;
 
 {$R *.dfm}
 
@@ -115,8 +115,8 @@ begin
   else
     TIEditName.Text := TorrentFData.Data.Info.FileList[0].FullPath;
   TIEditSize.Text := VarFormatBKM(TorrentFData.Data.Info.FilesSize);
-  TIEditHashV1.Text := TorrentFData.Data.HashV1;
-  TIEditHashV2.Text := TorrentFData.Data.HashV2;
+  TIEditHashV1.Text := IIF(TorrentFData.Data.HashV1 <> '', TorrentFData.Data.HashV1, 'N/A');
+  TIEditHashV2.Text := IIF(TorrentFData.Data.HashV2 <> '', TorrentFData.Data.HashV2, 'N/A');
   TIEditComment.Text := TorrentFData.Data.Comment.Text;
   TorrentFData.Free;
 end;

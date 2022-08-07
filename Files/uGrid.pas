@@ -10,8 +10,9 @@ uses
   uAppTrackMenus;
 
 const
+
   MAXCOL = 100;
-  MAXROW = 2000;
+  MAXROW = 1000;
   ROWHEIGHT = 18;
   NoSelection: TGridRect = (Left: 0; Top: -1; Right: 0; Bottom: -1);
 

@@ -13,8 +13,10 @@ object SGFrm: TSGFrm
     ColCount = 1000
     DefaultColWidth = 80
     DefaultRowHeight = 18
+    DoubleBuffered = True
     RowCount = 1000
     Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goColMoving, goThumbTracking, goFixedColClick, goFixedRowClick, goFixedHotTrack, goFixedRowDefAlign]
+    ParentDoubleBuffered = False
     TabOrder = 0
     OnDblClick = SGDblClick
     OnDrawCell = SGDrawCell

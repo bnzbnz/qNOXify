@@ -13,6 +13,7 @@ const
   THREAD_WAIT_TIME_ME = 1500;
 
 type
+
   TqBitThread = class(TThread)
     Refresh: boolean; // Thread Safe
     Hash: string;
@@ -157,18 +158,21 @@ var
 
 
 implementation
-uses RTTI, System.Generics.Defaults, uqBitAddTorrentDlg, uSpeedLimitsDlg, ShellAPI;
+uses RTTI, ShellAPI,  System.Generics.Defaults, uqBitAddTorrentDlg, uSpeedLimitsDlg, uqBitUtils;
 
 {$R *.dfm}
 
 procedure TqBitMainForm.FormShow(Sender: TObject);
 begin
+
+  {$IFDEF USEDEVAPI}
   if TqBitObject.Version <> QBIT4DELPHI_COMPAT_VERSION then
   begin
     ShowMessage( Format('qBit4Delphi Release %s is required...', [QBIT4DELPHI_COMPAT_VERSION]) );
     PostMessage(Handle, WM_CLOSE, 0, 0);
     Exit;
   end;
+  {$ENDIF}
 
   SGDetails.Selection := NoSelection;
   DragAcceptFiles (Self.handle, True);
@@ -721,6 +725,10 @@ begin
                 qBMain.Ftorrents.Count.ToString
               ]);
 
+  {$IFDEF DEBUG}
+    Caption := Caption + ' - Version : ' + qB.Version;
+  {$ENDIF}
+
   TSortList.Free;
   RttiCtx.Free;
 end;
@@ -786,17 +794,18 @@ begin
     SGDetails.ColAlignments[5] := taLeftJustify;
     SGDetails.ColWidths[5] := 200;
 
-    SGDetails.Cells[0, 1] := 'Time Active : '; SGDetails.RowHeights[1] := 20;
-    SGDetails.Cells[0, 2] := 'Downloaded : '; SGDetails.RowHeights[2] := 20;
-    SGDetails.Cells[0, 3] := 'Download Speed : '; SGDetails.RowHeights[3] := 20;
-    SGDetails.Cells[0, 4] := 'Download Limit : '; SGDetails.RowHeights[4] := 20;
-    SGDetails.Cells[0, 5] := 'Share Ratio : '; SGDetails.RowHeights[5] := 20;
-    SGDetails.RowHeights[6] := 20;
-    SGDetails.Cells[0, 7] := 'Total Size : '; SGDetails.RowHeights[7] := 20;
-    SGDetails.Cells[0, 8] := 'Added On : '; SGDetails.RowHeights[8] := 20;
-    SGDetails.Cells[0, 9] := 'Hash : '; SGDetails.RowHeights[9] := 20;
-    SGDetails.Cells[0, 10] := 'Save Path : '; SGDetails.RowHeights[10] := 20;
-    SGDetails.Cells[0, 11] := 'Comment : '; SGDetails.RowHeights[11] := 20;
+    var RowH:= 16;
+    SGDetails.Cells[0, 1] := 'Time Active : '; SGDetails.RowHeights[1] := RowH;
+    SGDetails.Cells[0, 2] := 'Downloaded : '; SGDetails.RowHeights[2] := RowH;
+    SGDetails.Cells[0, 3] := 'Download Speed : '; SGDetails.RowHeights[3] := RowH;
+    SGDetails.Cells[0, 4] := 'Download Limit : '; SGDetails.RowHeights[4] := RowH;
+    SGDetails.Cells[0, 5] := 'Share Ratio : '; SGDetails.RowHeights[5] := RowH;
+    SGDetails.RowHeights[6] := RowH;
+    SGDetails.Cells[0, 7] := 'Total Size : '; SGDetails.RowHeights[7] := RowH;
+    SGDetails.Cells[0, 8] := 'Added On : '; SGDetails.RowHeights[8] := RowH;
+    SGDetails.Cells[0, 9] := 'Hash : '; SGDetails.RowHeights[9] := RowH;
+    SGDetails.Cells[0, 10] := 'Save Path : '; SGDetails.RowHeights[16] := RowH;
+    SGDetails.Cells[0, 11] := 'Comment : '; SGDetails.RowHeights[11] := RowH;
 
     SGDetails.Cells[2, 1] := 'ETA : ';
     SGDetails.Cells[2, 2] := 'Uploded : ';
@@ -931,7 +940,7 @@ end;
 procedure TqBitMainForm.ThreadDisconnect(Sender: TThread);
 begin
   ShowMessage('You have been disconnected ! Exiting...');
-  PostMessage(Handle, WM_CLOSE, 0, 0);
+  Close;
 end;
 
 procedure TqBitMainForm.ThreadMainUpdated(Sender: TqBitMainThread);
@@ -1069,7 +1078,12 @@ end;
 procedure TqBitMainThread.Execute;
 begin
   qBMain := qBTh.GetMainData(0); // Full server data update
-  Synchronize( procedure begin qBitMainForm.ThreadMainUpdated(Self); end );
+  if qBMain = Nil then
+  begin
+    Synchronize( procedure begin qBitMainForm.ThreadDisconnect(Self); end );
+    Terminate;
+  end else
+    Synchronize( procedure begin qBitMainForm.ThreadMainUpdated(Self); end );
   while not Terminated do
   begin
     Refresh := False;
@@ -1080,7 +1094,7 @@ begin
       Synchronize( procedure begin qBitMainForm.ThreadDisconnect(Self); end );
       Terminate;
     end else begin
-      qBMain.Merge(U); // Merge to qBMain to be update to date
+      qBMain.Merge(U); // Merge to qBMain to be updated to date
       U.Free;
       Synchronize( procedure begin qBitMainForm.ThreadMainUpdated(Self); end );
       while
