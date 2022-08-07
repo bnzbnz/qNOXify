@@ -165,14 +165,12 @@ uses RTTI, ShellAPI,  System.Generics.Defaults, uqBitAddTorrentDlg, uSpeedLimits
 procedure TqBitMainForm.FormShow(Sender: TObject);
 begin
 
-  {$IFDEF USEDEVAPI}
   if TqBitObject.Version <> QBIT4DELPHI_COMPAT_VERSION then
   begin
-    ShowMessage( Format('qBit4Delphi Release %s is required...', [QBIT4DELPHI_COMPAT_VERSION]) );
+    ShowMessage( Format('qBit4Delphi : Release %s is required...', [QBIT4DELPHI_COMPAT_VERSION]) );
     PostMessage(Handle, WM_CLOSE, 0, 0);
     Exit;
   end;
-  {$ENDIF}
 
   SGDetails.Selection := NoSelection;
   DragAcceptFiles (Self.handle, True);
