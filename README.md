@@ -1,21 +1,12 @@
 # qNOXify
-Version 2 : Threaded Model
 
-qNOXify is a qBittorernt Thin Client for windows created by [L.Meyer](qNOXify@ea4d.com). It is developed with Delphi Community Edition 10.4 (Pascal) and based on [qBit4Delphi](https://github.com/bnzbnz/qBit4Delphi) work. Ideal for NOX (headless qBittorrent) users who want to take control of their servers right from the desktop.
+qNOXify is a qBittorernt Thin Client for windows created by [L.Meyer](qNOXify@ea4d.com). It is developed with Delphi Community Edition 11.3 (Pascal) and based on [qBit4Delphi](https://github.com/bnzbnz/qBit4Delphi) work. Ideal for NOX (headless qBittorrent) users who want to take control of their servers right from the desktop.
 
 ## Run
-  Execute qNOXify.exe . The application is signed, but you may get a SmartScreen warning the first time... just run... (or build from source if you want to make sure :) )
+Execute qNOXify.exe . You may get a SmartScreen warning the first time... just run... (or build from source if you want to make sure :) )
   
 ## Build
-In order to build qNOXify, you will need to download [qBit4Delphi](https://github.com/bnzbnz/qBit4Delphi/releases/tag/v1.100.2.8.3) and add it to the qNOXify source folder directory:
-
-qNOXify Folder :
-
-  
- ==> qNOXify/qBit4Delphi/   (rename the zip souce code folder as needed)
-      
-
-Remember to execute first Patcher.exe in the qBit4Delphi folder.
+In order to build qNOXify, you'll have to execute, first, qBit4Delphi\patcher.exe (again SmartScreen or run from source). Il will generate the necessary modified json units matching your Delphi version.
 
 You shoud be good to go...
 
