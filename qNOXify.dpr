@@ -1,41 +1,90 @@
 program qNOXify;
 uses
 
-  {$IFDEF DEBUG}
-    FastMM4,    //  MPL 1.1, LGPL 2.1 (https://github.com/pleriche/FastMM4)  << Can be removed if not used
+  {.$DEFINE USEDEVAPI}
+
+  {$IFDEF USEDEVAPI}
+    FastMM4,    // Can be removed if not available
   {$ENDIF}
 
   {$IFDEF VER340}  // Delphi 10.4 Sydney
-      REST.Json.Types in 'qBit4Delphi\API\JSON\21\REST.Json.Types.pas',
-      REST.JsonReflect in 'qBit4Delphi\API\JSON\21\REST.JsonReflect.pas',
-      System.JSON in 'qBit4Delphi\API\JSON\21\System.JSON.pas',
-      REST.Json in 'qBit4Delphi\API\JSON\21\REST.Json.pas',,
+      {$IFDEF USEDEVAPI}
+        REST.Json.Types in '..\qBit4Delphi\API\JSON\22\REST.Json.Types.pas',
+        REST.JsonReflect in '..\qBit4Delphi\API\JSON\22\REST.JsonReflect.pas',
+        System.JSON in '..\qBit4Delphi\API\JSON\22\System.JSON.pas',
+        REST.Json in '..\qBit4Delphi\API\JSON\22\REST.Json.pas',
+      {$ELSE}
+        REST.Json.Types in 'qBit4Delphi\API\JSON\21\REST.Json.Types.pas',
+        REST.JsonReflect in 'qBit4Delphi\API\JSON\21\REST.JsonReflect.pas',
+        System.JSON in 'qBit4Delphi\API\JSON\21\System.JSON.pas',
+        REST.Json in 'qBit4Delphi\API\JSON\21\REST.Json.pas',
+       {$ENDIF}
   {$ENDIF}
   {$IFDEF VER350} // Delphi 11 Alexandria
-      REST.Json.Types in 'qBit4Delphi\API\JSON\22\REST.Json.Types.pas',
-      REST.JsonReflect in 'qBit4Delphi\API\JSON\22\REST.JsonReflect.pas',
-      System.JSON in 'qBit4Delphi\API\JSON\22\System.JSON.pas',
-      REST.Json in 'qBit4Delphi\API\JSON\22\REST.Json.pas',
+      {$IFDEF USEDEVAPI}
+        REST.Json.Types in '..\qBit4Delphi\API\JSON\22\REST.Json.Types.pas',
+        REST.JsonReflect in '..\qBit4Delphi\API\JSON\22\REST.JsonReflect.pas',
+        System.JSON in '..\qBit4Delphi\API\JSON\22\System.JSON.pas',
+        REST.Json in '..\qBit4Delphi\API\JSON\22\REST.Json.pas',
+      {$ELSE}
+        REST.Json.Types in 'qBit4Delphi\API\JSON\22\REST.Json.Types.pas',
+        REST.JsonReflect in 'qBit4Delphi\API\JSON\22\REST.JsonReflect.pas',
+        System.JSON in 'qBit4Delphi\API\JSON\22\System.JSON.pas',
+        REST.Json in 'qBit4Delphi\API\JSON\22\REST.Json.pas',
+      {$ENDIF}
+  {$ENDIF}
+  {$IFDEF VER360} // Delphi 12 Yukon
+      {$IFDEF USEDEVAPI}
+        REST.Json.Types in '..\qBit4Delphi\API\JSON\23\REST.Json.Types.pas',
+        REST.JsonReflect in '..\qBit4Delphi\API\JSON\23\REST.JsonReflect.pas',
+        System.JSON in '..\qBit4Delphi\API\JSON\23\System.JSON.pas',
+        REST.Json in '..\qBit4Delphi\API\JSON\23\REST.Json.pas',
+      {$ELSE}
+        REST.Json.Types in 'qBit4Delphi\API\JSON\23\REST.Json.Types.pas',
+        REST.JsonReflect in 'qBit4Delphi\API\JSON\23\REST.JsonReflect.pas',
+        System.JSON in 'qBit4Delphi\API\JSON\23\System.JSON.pas',
+        REST.Json in 'qBit4Delphi\API\JSON\23\REST.Json.pas',
+      {$ENDIF}
   {$ENDIF}
 
-  uqBitAPITypes in 'qBit4Delphi\API\uqBitAPITypes.pas',
-  uqBitAPI in 'qBit4Delphi\API\uqBitAPI.pas',
-  uqBitObject in 'qBit4Delphi\API\uqBitObject.pas',
-  uTorrentReader in 'qBit4Delphi\API\Tools\uTorrentReader.pas',
-  uqBitPatchChecker in 'qBit4Delphi\Demos\common\uqBitPatchChecker.pas',
+  {$IFDEF USEDEVAPI}
+        uqBitAPITypes in '..\qBit4Delphi\API\uqBitAPITypes.pas',
+        uqBitAPI in '..\qBit4Delphi\API\uqBitAPI.pas',
+        uqBitObject in '..\qBit4Delphi\API\uqBitObject.pas',
+        uTorrentReader in '..\qBit4Delphi\common\uTorrentReader.pas',
+        uqBitPatchChecker in '..\qBit4Delphi\common\uqBitPatchChecker.pas',
+        uKobicAppTrackMenus in '..\qBit4Delphi\demos\common\uKobicAppTrackMenus.pas',
+        uBEncode in '..\qBit4Delphi\common\uBEncode.pas',
+        uqBitFormat in '..\qBit4Delphi\common\uqBitFormat.pas',
+        uqBitAPIUtils  in '..\qBit4Delphi\API\uqBitAPIUtils .pas',
+        uqBitUtils in '..\qBit4Delphi\common\uqBitUtils.pas',
+        uqBitAddTorrentDlg in '..\qBit4Delphi\demos\common\dialogs\uqBitAddTorrentDlg.pas' {qBitAddTorrentDlg},
+        uqBitAddServerDlg in '..\qBit4Delphi\demos\common\dialogs\uqBitAddServerDlg.pas' {qBitAddServerDlg},
+        uqBitCategoriesDlg in '..\qBit4Delphi\demos\common\dialogs\uqBitCategoriesDlg.pas' {qBitCategoriesDlg},
+        uqBitSelectServerDlg in '..\qBit4Delphi\demos\common\dialogs\uqBitSelectServerDlg.pas' {qBitSelectServerDlg},
+  {$ELSE}
+        uqBitAPITypes in 'qBit4Delphi\API\uqBitAPITypes.pas',
+        uqBitAPI in 'qBit4Delphi\API\uqBitAPI.pas',
+        uqBitObject in 'qBit4Delphi\API\uqBitObject.pas',
+        uTorrentReader in 'qBit4Delphi\common\uTorrentReader.pas',
+        uqBitPatchChecker in 'qBit4Delphi\common\uqBitPatchChecker.pas',
+        uKobicAppTrackMenus in 'qBit4Delphi\demos\common\uKobicAppTrackMenus.pas',
+        uBEncode in 'qBit4Delphi\common\uBEncode.pas',
+        uqBitFormat in 'qBit4Delphi\common\uqBitFormat.pas',
+        uqBitAPIUtils  in 'qBit4Delphi\API\uqBitAPIUtils .pas',
+        uqBitUtils in 'qBit4Delphi\common\uqBitUtils.pas',
+        uqBitAddTorrentDlg in 'qBit4Delphi\demos\common\dialogs\uqBitAddTorrentDlg.pas' {qBitAddTorrentDlg},
+        uqBitAddServerDlg in 'qBit4Delphi\demos\common\dialogs\uqBitAddServerDlg.pas' {qBitAddServerDlg},
+        uqBitCategoriesDlg in 'qBit4Delphi\demos\Common\Dialogs\uqBitCategoriesDlg.pas' {qBitCategoriesDlg},
+        uqBitSelectServerDlg in 'qBit4Delphi\demos\Common\Dialogs\uqBitSelectServerDlg.pas' {qBitSelectServerDlg},
+  {$ENDIF}
 
   Vcl.Forms,
-  uqNOXify in 'Files\uqNOXify.pas' {qBitMainForm},
-  uAppTrackMenus in 'Files\uAppTrackMenus.pas',
-  uBEncode in 'qBit4Delphi\API\Tools\uBEncode.pas',
-  uqBitFormat in 'qBit4Delphi\Demos\common\uqBitFormat.pas',
-  uGrid in 'Files\uGrid.pas' {SGFrm: TFrame},
-  uqBitAddTorrentDlg in 'Files\uqBitAddTorrentDlg.pas' {qBitAddTorrentDlg},
+
   uSetLocation in 'Files\uSetLocation.pas' {SetLocationDlg},
   uSpeedLimitsDlg in 'Files\uSpeedLimitsDlg.pas' {SpeedLimitsDlg},
-  uqBitAddServerDlg in 'qBit4Delphi\Demos\common\uqBitAddServerDlg.pas' {qBitAddServerDlg},
-  uqBitSelectServerDlg in 'qBit4Delphi\Demos\common\uqBitSelectServerDlg.pas' {qBitSelectServerDlg},
-  uqBitUtils in 'Files\uqBitUtils.pas';
+  uqNOXify in 'Files\uqNOXify.pas' {qBitMainForm},
+  uGrid in 'Files\uGrid.pas' {SGFrm: TFrame};
 
 {$R *.res}
 
@@ -47,57 +96,11 @@ begin
   Application.CreateForm(TSetLocationDlg, SetLocationDlg);
   Application.CreateForm(TSpeedLimitsDlg, SpeedLimitsDlg);
   Application.CreateForm(TqBitAddServerDlg, qBitAddServerDlg);
-  Application.CreateForm(TqBitSelectServerDlg, qBitSelectServerDlg);
+  Application.CreateForm(TqBitCategoriesDlg, qBitCategoriesDlg);
   Application.CreateForm(TqBitAddTorrentDlg, qBitAddTorrentDlg);
+  Application.CreateForm(TqBitSelectServerDlg, qBitSelectServerDlg);
   Application.Run;
 end.
-
-
-
-  {$IFDEF DEBUG}
-    FastMM4,    // Can be removed if not available
-  {$ENDIF}
-
-  {$DEFINE USEDEVAPI}   // Switch between last Release and Main Dev.
-
-  {$IFDEF VER340}  // Delphi 10.4 Sydney
-    {$IFNDEF USEDEVAPI}
-      REST.Json.Types in 'qBit4Delphi\API\JSON\21\REST.Json.Types.pas',
-      REST.JsonReflect in 'qBit4Delphi\API\JSON\21\REST.JsonReflect.pas',
-      System.JSON in 'qBit4Delphi\API\JSON\21\System.JSON.pas',
-      REST.Json in 'qBit4Delphi\API\JSON\21\REST.Json.pas',
-      uqBitAPITypes in 'qBit4Delphi\API\uqBitAPITypes.pas',
-      uqBitAPI in 'qBit4Delphi\API\uqBitAPI.pas',
-      uqBitObject in 'qBit4Delphi\API\uqBitObject.pas',
-    {$ELSE}
-      REST.Json.Types in '..\qBit4Delphi\API\JSON\21\REST.Json.Types.pas',
-      REST.JsonReflect in '..\qBit4Delphi\API\JSON\21\REST.JsonReflect.pas',
-      System.JSON in '..\qBit4Delphi\API\JSON\21\System.JSON.pas',
-      REST.Json in '..\qBit4Delphi\API\JSON\21\REST.Json.pas',
-      uqBitAPITypes in '..\qBit4Delphi\API\uqBitAPITypes.pas',
-      uqBitAPI in '..\qBit4Delphi\API\uqBitAPI.pas',
-      uqBitObject in '..\qBit4Delphi\API\uqBitObject.pas',
-    {$ENDIF}
-  {$ENDIF}
-  {$IFDEF VER350} // Delphi 11 Alexandria
-    {$IFNDEF USEDEVAPI}
-      REST.Json.Types in 'qBit4Delphi\API\JSON\22\REST.Json.Types.pas',
-      REST.JsonReflect in 'qBit4Delphi\API\JSON\22\REST.JsonReflect.pas',
-      System.JSON in 'qBit4Delphi\API\JSON\22\System.JSON.pas',
-      REST.Json in 'qBit4Delphi\API\JSON\22\REST.Json.pas',
-      uqBitAPITypes in 'qBit4Delphi\API\uqBitAPITypes.pas',
-      uqBitAPI in 'qBit4Delphi\API\uqBitAPI.pas',
-      uqBitObject in 'qBit4Delphi\API\uqBitObject.pas',
-    {$ELSE}
-      REST.Json.Types in '..\qBit4Delphi\API\JSON\22\REST.Json.Types.pas',
-      REST.JsonReflect in '..\qBit4Delphi\API\JSON\22\REST.JsonReflect.pas',
-      System.JSON in '..\qBit4Delphi\API\JSON\22\System.JSON.pas',
-      REST.Json in '..\qBit4Delphi\API\JSON\22\REST.Json.pas',
-      uqBitAPITypes in '..\qBit4Delphi\API\uqBitAPITypes.pas',
-      uqBitAPI in '..\qBit4Delphi\API\uqBitAPI.pas',
-      uqBitObject in '..\qBit4Delphi\API\uqBitObject.pas',
-    {$ENDIF}
-  {$ENDIF}
 
 
 
