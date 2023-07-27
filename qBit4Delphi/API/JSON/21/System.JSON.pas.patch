@@ -1,0 +1,31 @@
+--- System.JSON.pas.org	Sat Feb 20 06:57:42 2021
++++ System.JSON.pas	Sat Aug 27 12:00:30 2022
+@@ -1331,7 +1331,9 @@
+   SetLength(FCharData, CInitialLen);
+   FCharLen := CInitialLen;
+   FCharPos := 0;
+-  FCache := (Range - Offset) > 1000000;
++  // LMR: Disable caching, it crashes on large json requests...
++  // FCache := (Range - Offset) > 1000000;
++  FCache := False;
+ end;
+ 
+ constructor TJSONByteReader.Create(const Data: PByte; const Offset: Integer; const Range: Integer);
+@@ -1549,6 +1551,7 @@
+     LCached: string;
+     LHash: Cardinal;
+   begin
++  	Exit;  // LMR: Disabled crash again on large files
+     LHash := HashString(ADest);
+     // NOTE: We have strings that produce the same hashes here,
+     //       only the first benefits from cache (which is really an intern pool).
+@@ -2442,7 +2445,8 @@
+     FMembers.List[0].ToChars(Builder, Options);
+   for I := 1 to Size - 1 do
+   begin
+-    Builder.Append(',');
++    // LMR:
++    if Builder.Length > 1 then Builder.Append(',');
+     FMembers.List[I].ToChars(Builder, Options);
+   end;
+   Builder.Append('}');
