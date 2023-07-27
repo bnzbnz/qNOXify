@@ -9,7 +9,7 @@ uses
   Vcl.ComCtrls, uGrid, Vcl.StdCtrls, Vcl.Buttons, Vcl.Grids, uSetLocation, uqBitSelectServerDlg;
 
 const
-  QBIT4DELPHI_COMPAT_VERSION = '1.100.2.8.3';
+  QBIT4DELPHI_COMPAT_VERSION = '1.101.2.8.19';
   THREAD_WAIT_TIME_ME = 1500;
 
 type
@@ -87,6 +87,10 @@ type
     AtomaticTorrentManagement1: TMenuItem;
     On1: TMenuItem;
     Off1: TMenuItem;
+    PMPeers: TPopupMenu;
+    Ban1: TMenuItem;
+    Ban2: TMenuItem;
+    UnbaAll1: TMenuItem;
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure BitBtn1Click(Sender: TObject);
@@ -106,6 +110,8 @@ type
     procedure ForceReannoune1Click(Sender: TObject);
     procedure On1Click(Sender: TObject);
     procedure Off1Click(Sender: TObject);
+    procedure Ban1Click(Sender: TObject);
+    procedure UnbaAll1Click(Sender: TObject);
   private
     { Private declarations }
     FMainLock : Boolean;
@@ -117,9 +123,9 @@ type
     qB: TqBitObject;
     qBPrefs: TqBitPreferencesType;
 
-    function GetGridSelHashes: TStringList;
     function GetGridSelTorrents: TObjectList<TqBitTorrentType>;
     function GetLastGridSelTorrent: TqBitTorrentType;
+
   protected
      procedure WMDropFiles(var Msg: TMessage); message WM_DROPFILES;
   public
@@ -144,6 +150,9 @@ type
     procedure DoUpdateTinfoUI(Sender: TObject);
     procedure DoMainEventPopup(Sender: TObject; X, Y, aCol, aRow: integer);
 
+    //  Peers Frame Callbacks
+    procedure DoPeersEventPopup(Sender: TObject; X, Y, aCol, aRow: integer);
+
     // Threads Syncs
     procedure ThreadDisconnect(Sender: TThread);
     procedure ThreadGetSelectedHash(Sender: TqBitThread);
@@ -165,7 +174,7 @@ uses RTTI, ShellAPI,  System.Generics.Defaults, uqBitAddTorrentDlg, uSpeedLimits
 procedure TqBitMainForm.FormShow(Sender: TObject);
 begin
 
-  if TqBitObject.Version <> QBIT4DELPHI_COMPAT_VERSION then
+  if TqBitObject.qBitVersion <> QBIT4DELPHI_COMPAT_VERSION then
   begin
     ShowMessage( Format('qBit4Delphi : Release %s is required...', [QBIT4DELPHI_COMPAT_VERSION]) );
     PostMessage(Handle, WM_CLOSE, 0, 0);
@@ -246,6 +255,7 @@ begin
   PeersFrame.DoCreate;
   PeersFrame.OnUpdateUIEvent := Self.DoUpdatePeersUI;
   PeersFrame.OnRowsSelectedEvent := Self.DoRowsSelectedPeers;
+  PeersFrame.OnPopupEvent := Self.DoPeersEventPopup;
   Row := -1;
   Inc(Row); PeersFrame.AddCol(Row, 'IP', 'Fip', VarFormatString, 84, True);
   Inc(Row); PeersFrame.AddCol(Row, 'Port', 'Fport', VarFormatString, 84, True);
@@ -271,15 +281,6 @@ begin
   Inc(Row); TrkrFrame.AddCol(Row, 'Donwloaded', 'Fnum_downloaded', VarFormatBKM, 84, True);
   Inc(Row); TrkrFrame.AddCol(Row, 'Message', 'Fmsg', VarFormatString, 128, True);
 
-end;
-
-function TqBitMainForm.GetGridSelHashes: TStringList;
-begin
-  var Sel := Self.MainFrame.GetGridSel;
-  Result := TStringList.Create;
-  for var v in Sel do
-    Result.Add(TqBitTorrentType(TSGData(v).Obj).Fhash);
-  Sel.Free;
 end;
 
 function TqBitMainForm.GetGridSelTorrents: TObjectList<TqBitTorrentType>;
@@ -309,7 +310,7 @@ end;
 procedure TqBitMainForm.ITMAddTFileClick(Sender: TObject);
 begin
   if OpenTorrent.Execute then
-  qBitAddTorrentDlg.ShowAsModal(qB, qBMain, OpenTorrent.Files);
+  qBitAddTorrentDlg.ShowAsModal(qB, OpenTorrent.Files);
 end;
 
 procedure TqBitMainForm.WMDropFiles(var Msg: TMessage);
@@ -329,14 +330,14 @@ begin
     FL.Add(FileName);
   end;
   if FL.Count > 0 then
-    qBitAddTorrentDlg.ShowAsModal(qB, qBMain, FL);
+    qBitAddTorrentDlg.ShowAsModal(qB, FL);
   FL.Free;
   DragFinish(hDrop);
 end;
 
 procedure TqBitMainForm.ITMDelTOnlyClick(Sender: TObject);
 begin
-  var SH := GetGridSelHashes;
+  var SH := MainFrame.GetSelectedKeys;
   qB.DeleteTorrents(SH, False);
   Self.FCurrentSelectedHash := '';
   SH.Free;
@@ -345,7 +346,7 @@ end;
 procedure TqBitMainForm.ITMDelWithDataClick(Sender: TObject);
 begin
   FMainLock := True;
-  var SH := GetGridSelHashes;
+  var SH := MainFrame.GetSelectedKeys;
   qB.DeleteTorrents(SH, True);
   SH.Free;
   FMainLock := False;
@@ -353,7 +354,7 @@ end;
 
 procedure TqBitMainForm.ITMPauseClick(Sender: TObject);
 begin
-  var SH := GetGridSelHashes;
+  var SH := MainFrame.GetSelectedKeys;
   qB.PauseTorrents(SH);
   SH.Free;
 end;
@@ -369,7 +370,7 @@ end;
 
 procedure TqBitMainForm.ITMResumeClick(Sender: TObject);
 begin
-  var SH := GetGridSelHashes;
+  var SH := MainFrame.GetSelectedKeys;
   qB.ResumeTorrents(SH);
   SH.Free;
 end;
@@ -381,7 +382,7 @@ end;
 
 procedure TqBitMainForm.ITMSetLocClick(Sender: TObject);
 begin
-  var SH := GetGridSelHashes;
+  var SH := MainFrame.GetSelectedKeys;
   var NewLoc := '';
   if SH.Count = 1 then
     NewLoc := InputBox('Set Location', 'New Location :', Self.GetLastGridSelTorrent.Fsave_path)
@@ -393,7 +394,7 @@ end;
 
 procedure TqBitMainForm.N4Click(Sender: TObject);
 begin
-  var SH := GetGridSelHashes;
+  var SH := MainFrame.GetSelectedKeys;
   qB.RecheckTorrents(SH);
   SH.Free;
 end;
@@ -401,21 +402,21 @@ end;
 
 procedure TqBitMainForm.ForceReannoune1Click(Sender: TObject);
 begin
-  var SH := GetGridSelHashes;
+  var SH := MainFrame.GetSelectedKeys;
   qB.ReannounceTorrents(SH);
   SH.Free;
 end;
 
 procedure TqBitMainForm.Off1Click(Sender: TObject);
 begin
-  var SH := GetGridSelHashes;
+  var SH := MainFrame.GetSelectedKeys;
   qB.SetAutomaticTorrentManagement(SH, False);
   SH.Free;
 end;
 
 procedure TqBitMainForm.On1Click(Sender: TObject);
 begin
-  var SH := GetGridSelHashes;
+  var SH := MainFrame.GetSelectedKeys;
   qB.SetAutomaticTorrentManagement(SH, True);
   SH.Free;
 end;
@@ -489,12 +490,17 @@ begin
 
   PeersFrame.RowUpdateStart;
   for var T in TSortList do
-    PeersFrame.AddRow(TqBitTorrentPeerDataType(T).Fip, T);
+    PeersFrame.AddRow(TqBitTorrentPeerDataType(T)._Key, T);
   PeersFrame.RowUpdateEnd;
 
   TSortList.Free;
   RttiCtx.Free;
 
+end;
+
+procedure TqBitMainForm.UnbaAll1Click(Sender: TObject);
+begin
+  qB.UnbanAllPeers;
 end;
 
 procedure TqBitMainForm.UpdateMainUI;
@@ -640,7 +646,7 @@ begin
 
   MainFrame.RowUpdateStart;
   for var T in TSortList do
-    MainFrame.AddRow(TqBitTorrentType(T).Fhash, T);
+    MainFrame.AddRow(TqBitTorrentType(T)._Key, T);
   MainFrame.RowUpdateEnd;
 
   // Displaying Tags
@@ -724,7 +730,7 @@ begin
               ]);
 
   {$IFDEF DEBUG}
-    Caption := Caption + ' - Version : ' + qB.Version;
+    Caption := Caption + ' - Version : ' + qB.qBitVersion;
   {$ENDIF}
 
   TSortList.Free;
@@ -872,6 +878,13 @@ end;
 
 
 
+procedure TqBitMainForm.Ban1Click(Sender: TObject);
+begin
+  var PeerKeys := PeersFrame.GetSelectedKeys;
+  qB.BanPeers(PeerKeys);
+  PeerKeys.Free;
+end;
+
 procedure TqBitMainForm.BitBtn1Click(Sender: TObject);
 begin
   Self.EditSearch.Clear
@@ -888,9 +901,22 @@ begin
   end;
 end;
 
+
+procedure TqBitMainForm.DoPeersEventPopup(Sender: TObject; X, Y, aCol,
+  aRow: integer);
+begin
+  //FMainLock := True;
+  try
+    PMPeers.Popup(X,Y);
+  finally
+    //FMainLock := False;
+  end;
+end;
+
+
 procedure TqBitMainForm.DoRowsSelectedMain(Sender: TObject);
 begin
-  var SelHashes := GetGridSelHashes;
+  var SelHashes := MainFrame.GetSelectedKeys;
   if SelHashes.Count = 0 then
   begin
     FCurrentSelectedHash := '';

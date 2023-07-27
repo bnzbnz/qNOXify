@@ -38,8 +38,8 @@ object qBitMainForm: TqBitMainForm
     inherited SG: TStringGrid
       Width = 1082
       Height = 245
-      ExplicitWidth = 1082
-      ExplicitHeight = 245
+      ExplicitWidth = 1078
+      ExplicitHeight = 244
       RowHeights = (
         18
         18
@@ -1050,6 +1050,7 @@ object qBitMainForm: TqBitMainForm
     Height = 65
     Align = alTop
     TabOrder = 1
+    ExplicitWidth = 1078
     object Label1: TLabel
       Left = 9
       Top = 8
@@ -1165,6 +1166,7 @@ object qBitMainForm: TqBitMainForm
         Options = []
         ScrollBars = ssVertical
         TabOrder = 0
+        ExplicitWidth = 1070
       end
     end
     object TabSheet2: TTabSheet
@@ -1216,6 +1218,8 @@ object qBitMainForm: TqBitMainForm
     BevelOuter = bvSpace
     Caption = 'Panel2'
     TabOrder = 3
+    ExplicitTop = 541
+    ExplicitWidth = 1078
     object StatusBar: TStatusBar
       Left = 1
       Top = -4
@@ -1250,6 +1254,7 @@ object qBitMainForm: TqBitMainForm
       PopupMenu = PMStatus
       ShowHint = False
       OnClick = StatusBarClick
+      ExplicitWidth = 1076
     end
   end
   object PMMain: TPopupMenu
@@ -1329,6 +1334,7 @@ object qBitMainForm: TqBitMainForm
   object OpenTorrent: TFileOpenDialog
     DefaultExtension = '.torrent'
     FavoriteLinks = <>
+    FileName = 'O:\Dev\Delphi\qBit4Delphi\Demos\WorkBench\Win32\Debug'
     FileTypes = <
       item
         DisplayName = 'Torrent'
@@ -1352,6 +1358,21 @@ object qBitMainForm: TqBitMainForm
     object PMISpeedLimits: TMenuItem
       Caption = 'Set Speed Limits'
       OnClick = PMISpeedLimitsClick
+    end
+  end
+  object PMPeers: TPopupMenu
+    Left = 780
+    Top = 406
+    object Ban1: TMenuItem
+      Caption = 'Ban'
+      OnClick = Ban1Click
+    end
+    object Ban2: TMenuItem
+      Caption = '-'
+    end
+    object UnbaAll1: TMenuItem
+      Caption = 'Unban All'
+      OnClick = UnbaAll1Click
     end
   end
 end

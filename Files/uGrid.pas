@@ -7,7 +7,7 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, System.UITypes,
   System.Generics.Collections,
   uqBitAPITypes, uqBitAPI, uqBitObject, uqBitFormat, Vcl.Menus,
-  uAppTrackMenus;
+  uKobicAppTrackMenus;
 
 const
 
@@ -85,6 +85,7 @@ type
     procedure RowUpdateEnd;
     procedure RowUpdateStart;
     procedure SelectAll;
+    function GetSelectedKeys: TStringList;
 
     property OnUpdateUIEvent: TTSGFrm_UpdateUI_Event read FOnUpdateUIEvent write FOnUpdateUIEvent;
     property OnPopupEvent: TTSGFrm_Popup_Event read FOnPopupEvent write FOnPopupEvent;
@@ -95,6 +96,15 @@ implementation
 uses RTTI, Math;
 
 {$R *.dfm}
+
+function TSGFrm.GetSelectedKeys: TStringList;
+begin
+  var Sel := GetGridSel;
+  Result := TStringList.Create;
+  for var v in Sel do
+    Result.Add(TSGData(v).Key);
+  Sel.Free;
+end;
 
 procedure TSGFrm.AddRow(K: string; V: TObject);
 begin
